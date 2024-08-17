@@ -1,0 +1,11 @@
+{
+  "name": "Python FastAPI Development",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "settings": {
+    "python.pythonPath": "/usr/local/bin/python"
+  },
+  "extensions": ["ms-python.python", "ms-azuretools.vscode-docker"],
+  "postCreateCommand": "poetry install",
+  "remoteUser": "root"
+}
