@@ -141,4 +141,6 @@ class Category(CategoryBase, table=True):
 class CategoryPublic(CategoryBase):
     id: uuid.UUID
         
-    
+class CategoriesPublic(SQLModel):
+    data: list[CategoryPublic]
+    count: int   

@@ -2,14 +2,14 @@ import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from sqlmodel import select
+from sqlmodel import select, func
 
 from app.api.deps import SessionDep
-from app.models import Category, CategoryCreate, CategoryPublic, CategoryPublic, CategoryUpdate, Message
+from app.models import Category, CategoryCreate, CategoryPublic, CategoryPublic, CategoryUpdate, Message, CategoriesPublic
 
 router = APIRouter()
 
-@router.get('/', response_model=list[Category])
+@router.get('/', response_model=CategoriesPublic)
 def read_categories(
     session: SessionDep, 
     skip: int = 0, 
@@ -18,11 +18,12 @@ def read_categories(
     Retrieve categories.
     Get categories with optional skip and limit parameters.
     """
-    categories = session.exec(
-        select(Category).offset(skip).limit(limit)
-    ).all()
+    count_statement = select(func.count()).select_from(Category)   
+    count = session.exec(count_statement).one()
+    statement = select(Category).offset(skip).limit(limit)
+    categories = session.exec(statement).all()
     
-    return categories
+    return CategoriesPublic(data=categories, count=count)
 
 @router.get('/{id}', response_model=CategoryPublic)
 def read_category(session: SessionDep, id: uuid.UUID) -> Any:
